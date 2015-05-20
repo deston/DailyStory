@@ -45,4 +45,5 @@ public class HomeListFragment extends BaseFragment implements IHomeListView{
         mAdapter = new HomeListAdapter(storyModelList);
         mListView.setAdapter(mAdapter);
     }
+
 }
