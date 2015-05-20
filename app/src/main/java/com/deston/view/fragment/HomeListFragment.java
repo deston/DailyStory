@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import com.deston.dailylaugh.app.R;
 import com.deston.iview.IHomeListView;
@@ -42,7 +41,7 @@ public class HomeListFragment extends BaseFragment implements IHomeListView{
 
     @Override
     public void initList(List<StoryModel> storyModelList) {
-        mAdapter = new HomeListAdapter(storyModelList);
+        mAdapter = new HomeListAdapter(getActivity(), storyModelList);
         mListView.setAdapter(mAdapter);
     }
 
