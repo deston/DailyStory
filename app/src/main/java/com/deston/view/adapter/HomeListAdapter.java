@@ -8,30 +8,26 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.deston.dailylaugh.app.R;
-import com.deston.model.StoryModel;
+import com.deston.model.HomeItemModel;
 
 import java.util.List;
 
-public class HomeListAdapter extends BaseAdapter {
-    private List<StoryModel> mStoryModels;
+
+public class HomeListAdapter extends BaseAdapter{
+    private List<HomeItemModel> mItemModels;
     private LayoutInflater mInflater;
-
-    public HomeListAdapter(Context context, List<StoryModel> models) {
-        this.mStoryModels = models;
-        mInflater = LayoutInflater.from(context);
+    public HomeListAdapter(Context  context, List<HomeItemModel> models) {
+        this.mItemModels = models;
+        this.mInflater = LayoutInflater.from(context);
     }
-
     @Override
     public int getCount() {
-        if (mStoryModels != null) {
-            return mStoryModels.size();
-        }
-        return 0;
+        return mItemModels.size();
     }
 
     @Override
-    public Object getItem(int position) {
-        return mStoryModels.get(position);
+    public HomeItemModel getItem(int position) {
+        return mItemModels.get(position);
     }
 
     @Override
@@ -41,33 +37,22 @@ public class HomeListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+        ViewHolder viewHolder = null;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.story_item_layout, null);
+            convertView = mInflater.inflate(R.layout.home_item_layout, null);
             viewHolder = new ViewHolder();
-            viewHolder.answerTv = (TextView) convertView.findViewById(R.id.story_item_answer_tv);
-            viewHolder.questionTv = (TextView) convertView.findViewById(R.id.story_item_question_tv);
-            viewHolder.headIconIv = (ImageView) convertView.findViewById(R.id.story_item_head_iv);
-            viewHolder.remarkTv = (TextView) convertView.findViewById(R.id.story_item_remark_tv);
-            viewHolder.authorTv = (TextView) convertView.findViewById(R.id.story_item_name_tv);
+            viewHolder.titleTv = (TextView) convertView.findViewById(R.id.home_item_title);
+            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.home_item_image);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        StoryModel item = (StoryModel) getItem(position);
-        viewHolder.answerTv.setText(item.answer);
-        viewHolder.authorTv.setText(item.author);
-        viewHolder.remarkTv.setText(item.remark);
-        viewHolder.headIconIv.setImageBitmap(item.headIcon);
-        viewHolder.questionTv.setText(item.question);
+        HomeItemModel itemModel = getItem(position);
+        viewHolder.titleTv.setText(itemModel.title);
         return convertView;
     }
-
     public class ViewHolder {
-        public TextView questionTv;
-        public ImageView headIconIv;
-        public TextView authorTv;
-        public TextView answerTv;
-        public TextView remarkTv;
+        private TextView titleTv;
+        private ImageView imageView;
     }
 }

@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.deston.dailylaugh.app.R;
 import com.deston.iview.IHomeListView;
+import com.deston.model.HomeItemModel;
 import com.deston.model.StoryModel;
 import com.deston.presenter.HomeListPresenterImpl;
 import com.deston.presenter.IHomeListPresenter;
 import com.deston.view.adapter.HomeListAdapter;
+import com.deston.view.adapter.StoryListAdapter;
 
 import java.util.List;
 
@@ -35,13 +37,14 @@ public class HomeListFragment extends BaseFragment implements IHomeListView{
         mHomeListPresenter.loadHomeList();
         return view;
     }
+
     private void initViews(View view) {
         mListView = (ListView) view.findViewById(R.id.home_list_view);
     }
 
     @Override
-    public void initList(List<StoryModel> storyModelList) {
-        mAdapter = new HomeListAdapter(getActivity(), storyModelList);
+    public void initList(List<HomeItemModel> models) {
+        mAdapter = new HomeListAdapter(getActivity(), models);
         mListView.setAdapter(mAdapter);
     }
 
