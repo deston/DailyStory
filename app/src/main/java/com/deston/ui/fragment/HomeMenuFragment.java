@@ -1,4 +1,4 @@
-package com.deston.view.fragment;
+package com.deston.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

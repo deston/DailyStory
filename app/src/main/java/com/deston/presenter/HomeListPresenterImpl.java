@@ -1,8 +1,7 @@
 package com.deston.presenter;
 
-import android.graphics.Path;
 import com.deston.iview.IHomeListView;
-import com.deston.model.HomeItemModel;
+import com.deston.base.model.HomeItemModel;
 
 import java.util.ArrayList;
 import java.util.List;

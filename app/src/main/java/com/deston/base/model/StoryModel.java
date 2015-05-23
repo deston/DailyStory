@@ -1,6 +1,4 @@
-package com.deston.model;
-
-import android.graphics.Bitmap;
+package com.deston.base.model;
 
 public class StoryModel extends Model {
     public String question = "";

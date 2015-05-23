@@ -29,7 +29,7 @@
                 android:layout_width="200dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
-                android:name="com.deston.view.fragment.HomeMenuFragment"
+                android:name="com.deston.ui.fragment.HomeMenuFragment"
                 />
 
     </android.support.v4.widget.DrawerLayout>

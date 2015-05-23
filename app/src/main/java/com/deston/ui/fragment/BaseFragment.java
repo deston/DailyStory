@@ -1,4 +1,4 @@
-package com.deston.view.fragment;
+package com.deston.ui.fragment;
 
 import android.support.v4.app.Fragment;
 

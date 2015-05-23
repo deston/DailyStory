@@ -1,7 +1,6 @@
 package com.deston.iview;
 
-import com.deston.model.HomeItemModel;
-import com.deston.model.StoryModel;
+import com.deston.base.model.HomeItemModel;
 
 import java.util.List;
 

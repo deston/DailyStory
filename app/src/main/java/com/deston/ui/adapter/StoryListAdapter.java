@@ -1,4 +1,4 @@
-package com.deston.view.adapter;
+package com.deston.ui.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.deston.dailylaugh.app.R;
-import com.deston.model.StoryModel;
+import com.deston.base.model.StoryModel;
 
 import java.util.List;
 

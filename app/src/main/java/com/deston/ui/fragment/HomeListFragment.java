@@ -1,18 +1,18 @@
-package com.deston.view.fragment;
+package com.deston.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.deston.dailylaugh.app.R;
 import com.deston.iview.IHomeListView;
-import com.deston.model.HomeItemModel;
-import com.deston.model.StoryModel;
+import com.deston.base.model.HomeItemModel;
 import com.deston.presenter.HomeListPresenterImpl;
 import com.deston.presenter.IHomeListPresenter;
-import com.deston.view.adapter.HomeListAdapter;
-import com.deston.view.adapter.StoryListAdapter;
+import com.deston.ui.adapter.HomeListAdapter;
 
 import java.util.List;
 
@@ -20,6 +20,7 @@ public class HomeListFragment extends BaseFragment implements IHomeListView{
     private ListView mListView;
     private HomeListAdapter mAdapter;
     private IHomeListPresenter mHomeListPresenter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     public static HomeListFragment newInstance() {
         return new HomeListFragment();
     }
@@ -40,6 +41,18 @@ public class HomeListFragment extends BaseFragment implements IHomeListView{
 
     private void initViews(View view) {
         mListView = (ListView) view.findViewById(R.id.home_list_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.home_list_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 3003);
+            }
+        });
     }
 
     @Override
