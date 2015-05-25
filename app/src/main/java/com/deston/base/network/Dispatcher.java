@@ -9,18 +9,22 @@ public abstract class Dispatcher {
     public abstract void enqueue(HttpRequest request);
 
     public abstract NetworkResponse execute(HttpRequest request) throws IOException;
+
     private NetworkResponse response;
+
     public abstract void finish(HttpRequest request);
+
     private Handler mResponseHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            HttpListener listener = (HttpListener)msg.obj;
+            HttpListener listener = (HttpListener) msg.obj;
             if (listener != null) {
                 listener.onResponse(response);
             }
         }
     };
+
     protected void onSuccess(HttpRequest request, NetworkResponse response) {
         HttpListener listener = request.getListener();
         Message message = Message.obtain();
@@ -28,9 +32,6 @@ public abstract class Dispatcher {
         this.response = response;
         mResponseHandler.sendMessage(message);
 
-//        if (listener != null) {
-//            listener.onResponse(response);
-//        }
     }
 
     protected void onFailed(HttpRequest request) {
