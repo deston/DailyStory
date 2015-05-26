@@ -1,34 +1,63 @@
 package com.deston.base.network;
 
-import android.app.DownloadManager;
 
 import java.io.IOException;
 
-public class HttpRequestTask implements Runnable {
+public class HttpRequestTask extends RequestTask implements Runnable {
     private HttpRequest mRequest;
     private HttpDispatcher mDispatcher;
+    private HttpUrlStack mHttpStack;
 
-    public HttpRequestTask(HttpRequest request, HttpDispatcher httpDispatcher) {
+    public HttpRequest getRequest() {
+        return mRequest;
+    }
+
+    public HttpRequestTask(HttpRequest request, HttpDispatcher httpDispatcher, HttpUrlStack httpUrlStack) {
         this.mRequest = request;
+        this.mDispatcher = httpDispatcher;
+        this.mHttpStack = httpUrlStack;
     }
 
     @Override
     public void run() {
-        if (mRequest.isCanceled()) {
-            mDispatcher.finish(mRequest);
-            mDispatcher.onCancel(mRequest);
-            return;
-        }
+        ResponseEntity entity = null;
         try {
-            NetworkResponse response = mDispatcher.execute(mRequest);
-            if (mRequest.isShouldCache()) {
-                mHttpEngine.getCache().put(mRequest.getCacheKey(), response);
-            }
-            mDispatcher.onSuccess(mRequest, response);
+            entity = executeRequest(mRequest);
         } catch (IOException e) {
-            mDispatcher.onFailed(mRequest);
+            e.printStackTrace();
+            entity = new ResponseEntity();
+            entity.code = -1;
         } finally {
-            mDispatcher.finish(mRequest);
+            onFinish(entity);
         }
+
+    }
+
+    @Override
+    public ResponseEntity executeRequest(HttpRequest request) throws IOException {
+        NetworkResponse response = mHttpStack.performRequest(mRequest);
+        ResponseEntity responseEntity = new ResponseEntity();
+        responseEntity.response = response;
+        return responseEntity;
+    }
+
+    @Override
+    public void onFinish(ResponseEntity entity) {
+        if (entity != null) {
+            if (entity.code != -1) {
+                if (mRequest.isShouldCache()) {
+                    mDispatcher.putTotCache(mRequest.getCacheKey(), entity.response);
+                }
+            }
+            HttpListener listener = mRequest.getListener();
+            listener.onResponse(entity);
+            mDispatcher.removeRunningTask(this);
+            mDispatcher.promoteTask();
+        }
+    }
+
+    @Override
+    public void onCancel() {
+
     }
 }

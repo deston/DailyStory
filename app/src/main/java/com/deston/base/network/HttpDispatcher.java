@@ -5,8 +5,8 @@ import java.util.concurrent.*;
 
 public class HttpDispatcher extends Dispatcher {
     private int mMaxRequest = 64;
-    private BlockingQueue<HttpRequest> mRunningQueue = new PriorityBlockingQueue<HttpRequest>();
-    private BlockingQueue<HttpRequest> mReadyQueue = new PriorityBlockingQueue<HttpRequest>();
+    private BlockingQueue<HttpRequestTask> mRunningQueue = new PriorityBlockingQueue<HttpRequestTask>();
+    private BlockingQueue<HttpRequestTask> mReadyQueue = new PriorityBlockingQueue<HttpRequestTask>();
     private ExecutorService mExecutorService;
     private HttpUrlStack mHttpStack;
     public HttpEngine mHttpEngine;
@@ -17,60 +17,26 @@ public class HttpDispatcher extends Dispatcher {
         mExecutorService = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>());
     }
-
+    
     @Override
     public void enqueue(final HttpRequest request) {
+        HttpRequestTask task = new HttpRequestTask(request, this, mHttpStack);
         if (mRunningQueue.size() < mMaxRequest) {
-            mRunningQueue.add(request);
-            mExecutorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    if (request.isCanceled()) {
-                        finish(request);
-                        onCancel(request);
-                        return;
-                    }
-                    try {
-                        NetworkResponse response = execute(request);
-                        if (request.isShouldCache()) {
-                            mHttpEngine.getCache().put(request.getCacheKey(), response);
-                        }
-                        onSuccess(request, response);
-                    } catch (IOException e) {
-                        onFailed(request);
-                    } finally {
-                        finish(request);
-                    }
-                }
-            });
+            mRunningQueue.add(task);
+            mExecutorService.execute(task);
         } else {
-            mReadyQueue.add(request);
+            mReadyQueue.add(task);
         }
     }
 
-
-
-    @Override
-    public NetworkResponse execute(HttpRequest request) throws IOException {
-        NetworkResponse response = null;
-        if (mHttpStack != null) {
-            response = mHttpStack.performRequest(request);
-        }
-        return response;
+    public void removeRunningTask(RequestTask task) {
+        mRunningQueue.remove(task);
     }
 
-
-    @Override
-    public void finish(final HttpRequest request) {
-        mRunningQueue.remove(request);
-        promoteRequest();
-    }
-
-    private void promoteRequest() {
+    public void promoteTask() {
         if (mRunningQueue.size() < mMaxRequest && !mReadyQueue.isEmpty()) {
-            HttpRequest request = mReadyQueue.poll();
-            enqueue(request);
+            HttpRequestTask task = mReadyQueue.poll();
+            enqueue(task.getRequest());
         }
     }
-
 }

@@ -17,13 +17,9 @@ public class CacheDispatcher extends Dispatcher {
             super.handleMessage(msg);
             if (msg.obj instanceof HttpRequest) {
                 HttpRequest request = (HttpRequest) msg.obj;
-                if (request.isCanceled()) {
-                    onCancel(request);
-                    return;
-                }
                 NetworkResponse response = execute(request);
                 if (response != null) {
-                    onSuccess(request, response);
+                    dispatchSuccess(request, response);
                 } else {
                     mHttpEngine.getHttpDispatcher().enqueue(request);
                 }
@@ -38,15 +34,10 @@ public class CacheDispatcher extends Dispatcher {
         mWorkerHandler.sendMessage(msg);
     }
 
-    @Override
     public NetworkResponse execute(HttpRequest request) {
         NetworkResponse response = (NetworkResponse) mHttpEngine.getCache().get(request.getCacheKey());
         return response;
     }
 
 
-    @Override
-    public void finish(HttpRequest request) {
-
-    }
 }

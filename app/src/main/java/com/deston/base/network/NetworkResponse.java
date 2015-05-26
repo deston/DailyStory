@@ -16,5 +16,4 @@ public class NetworkResponse {
         return mData;
     }
 
-
 }
