@@ -28,7 +28,9 @@ public class HttpDispatcher extends Dispatcher {
             mReadyQueue.add(task);
         }
     }
+    public void putToCache(String key, NetworkResponse response) {
 
+    }
     public void removeRunningTask(RequestTask task) {
         mRunningQueue.remove(task);
     }

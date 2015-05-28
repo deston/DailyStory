@@ -46,11 +46,10 @@ public class HttpRequestTask extends RequestTask implements Runnable {
         if (entity != null) {
             if (entity.code != -1) {
                 if (mRequest.isShouldCache()) {
-                    mDispatcher.putTotCache(mRequest.getCacheKey(), entity.response);
+                    mDispatcher.putToCache(mRequest.getCacheKey(), entity.response);
                 }
             }
-            HttpListener listener = mRequest.getListener();
-            listener.onResponse(entity);
+            mDispatcher.dispatchResponse(mRequest, entity);
             mDispatcher.removeRunningTask(this);
             mDispatcher.promoteTask();
         }

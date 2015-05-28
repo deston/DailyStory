@@ -19,7 +19,7 @@ public class CacheDispatcher extends Dispatcher {
                 HttpRequest request = (HttpRequest) msg.obj;
                 NetworkResponse response = execute(request);
                 if (response != null) {
-                    dispatchSuccess(request, response);
+                    dispatchResponse(request, response);
                 } else {
                     mHttpEngine.getHttpDispatcher().enqueue(request);
                 }
