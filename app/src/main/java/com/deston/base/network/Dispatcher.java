@@ -4,35 +4,53 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
-import java.io.IOException;
-
 public abstract class Dispatcher {
-    public abstract void enqueue(HttpRequest request);
+    protected DispatcherHandler mHandler = new DispatcherHandler(Looper.getMainLooper());
 
-    private Handler mResponseHandler = new Handler(Looper.getMainLooper()) {
+    public static final int MSG_DISPATCH_REQUEST = 1;
+    public static final int MSG_DISPATCH_RESPONSE = 2;
+    public static final int MSG_DISPATCH_CANCEL = 3;
+
+    public void dispatchRequest(HttpRequest request) {
+        mHandler.sendMessage(mHandler.obtainMessage(MSG_DISPATCH_REQUEST, request));
+    }
+
+    public void dispatchResponse(RequestTask requestTask) {
+        mHandler.sendMessage(mHandler.obtainMessage(MSG_DISPATCH_RESPONSE, requestTask));
+    }
+
+    public void dispatchCancel(HttpRequest request) {
+        mHandler.sendMessage(mHandler.obtainMessage(MSG_DISPATCH_CANCEL, request));
+    }
+
+    public abstract void performRequest(HttpRequest request);
+
+    public abstract void performResponse(RequestTask requestTask);
+
+    public abstract void performCancel(HttpRequest request);
+
+
+    public class DispatcherHandler extends Handler {
+
+        public DispatcherHandler(Looper looper) {
+            super(looper);
+        }
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            NetworkHolder holder = (NetworkHolder) msg.obj;
-            HttpRequest request = holder.request;
-            ResponseEntity responseEntity = holder.responseEntity;
-            if (request != null && request.getListener() != null) {
-                request.getListener().onResponse(responseEntity);
+            switch (msg.what) {
+                case MSG_DISPATCH_CANCEL:
+                    performCancel((HttpRequest) msg.obj);
+                    break;
+                case MSG_DISPATCH_REQUEST:
+                    performRequest((HttpRequest) msg.obj);
+                    break;
+                case MSG_DISPATCH_RESPONSE:
+                    performResponse((RequestTask) msg.obj);
+                    break;
             }
         }
-    };
-
-    protected void dispatchResponse(HttpRequest request, ResponseEntity responseEntity) {
-        Message message = Message.obtain();
-        NetworkHolder holder = new NetworkHolder();
-        holder.request = request;
-        holder.responseEntity = responseEntity;
-        message.obj = holder;
-        mResponseHandler.sendMessage(message);
     }
 
-    private class NetworkHolder {
-        HttpRequest request;
-        ResponseEntity responseEntity;
-    }
 }

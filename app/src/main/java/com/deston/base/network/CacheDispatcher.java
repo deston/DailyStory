@@ -1,43 +1,41 @@
 package com.deston.base.network;
 
 
-import android.os.Handler;
-import android.os.Message;
+import com.deston.base.cache.Cache;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CacheDispatcher extends Dispatcher {
-    private HttpEngine mHttpEngine;
-
-    public CacheDispatcher(HttpEngine httpEngine) {
-        this.mHttpEngine = httpEngine;
+    private Cache mCache;
+    private Map<String, Runnable> runningMap = new HashMap<String, Runnable>();
+    public CacheDispatcher(Cache cache) {
+        this.mCache = cache;
     }
 
-    private Handler mWorkerHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.obj instanceof HttpRequest) {
-                HttpRequest request = (HttpRequest) msg.obj;
-                NetworkResponse response = execute(request);
-                if (response != null) {
-                    dispatchResponse(request, response);
-                } else {
-                    mHttpEngine.getHttpDispatcher().enqueue(request);
-                }
-            }
-        }
-    };
 
     @Override
-    public void enqueue(HttpRequest request) {
-        Message msg = Message.obtain();
-        msg.obj = request;
-        mWorkerHandler.sendMessage(msg);
+    public void performRequest(HttpRequest request) {
+        CacheRequestTask task = new CacheRequestTask(request, mCache, this);
+        runningMap.put(request.getCacheKey(), task);
+        mHandler.post(task);
     }
 
-    public NetworkResponse execute(HttpRequest request) {
-        NetworkResponse response = (NetworkResponse) mHttpEngine.getCache().get(request.getCacheKey());
-        return response;
+    @Override
+    public void performResponse(RequestTask requestTask) {
+        HttpRequest request = requestTask.mRequest;
+        if (request != null) {
+            HttpListener listener = request.getListener();
+            if (listener != null) {
+                listener.onResponse(requestTask.responseEntity);
+            }
+        }
     }
 
+
+    @Override
+    public void performCancel(HttpRequest request) {
+        mHandler.removeCallbacks(runningMap.get(request.getCacheKey()));
+    }
 
 }

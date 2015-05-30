@@ -18,9 +18,10 @@ public class HttpEngine {
     public Cache getCache() {
         return mCache;
     }
+
     private HttpEngine() {
-        mHttpDispatcher = new HttpDispatcher(this);
-        mCacheDispatcher = new CacheDispatcher(this);
+        mHttpDispatcher = new HttpDispatcher(mCache);
+        mCacheDispatcher = new CacheDispatcher(mCache);
         mCache = new LruMemoryCache();
     }
 
@@ -30,9 +31,9 @@ public class HttpEngine {
     public void execute(HttpRequest request, HttpListener listener, boolean getCache) {
         request.setListener(listener);
         if (getCache) {
-            mCacheDispatcher.enqueue(request);
+            mCacheDispatcher.dispatchRequest(request);
         } else {
-            mHttpDispatcher.enqueue(request);
+            mHttpDispatcher.dispatchRequest(request);
         }
     }
 
@@ -40,6 +41,9 @@ public class HttpEngine {
         execute(request, listener, false);
     }
 
-
+    public void cancel(HttpRequest request) {
+        mCacheDispatcher.dispatchCancel(request);
+        mHttpDispatcher.dispatchCancel(request);
+    }
 
 }

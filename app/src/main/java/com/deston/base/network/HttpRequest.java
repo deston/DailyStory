@@ -7,8 +7,6 @@ public  class HttpRequest implements Comparable{
     private String mUrl;
     private Map<String, String> mAdditionnalHeaders;
     private HttpListener mListener;
-    private boolean mIsNeedRefresh;
-    private boolean mIsCanceled;
     private boolean mShouldCache;
     private int mMethod = Method.GET;
     private int mTimeOuts = 3000;
@@ -57,13 +55,6 @@ public  class HttpRequest implements Comparable{
     }
     public String getCacheKey() {
         return "";
-    }
-
-    public void cancel() {
-        mIsCanceled = true;
-    }
-    public boolean isCanceled() {
-        return mIsCanceled;
     }
 
     public void setShouldCache(boolean shouldCache) {

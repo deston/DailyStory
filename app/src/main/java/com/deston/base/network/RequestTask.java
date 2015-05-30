@@ -1,11 +1,24 @@
 package com.deston.base.network;
 
-import java.io.IOException;
 
-public abstract class RequestTask {
-    public abstract ResponseEntity executeRequest(HttpRequest request) throws IOException;
+public abstract class RequestTask implements Runnable{
+    protected HttpRequest mRequest;
+    protected ResponseEntity responseEntity;
+    public RequestTask(HttpRequest request) {
+        this.mRequest = request;
+    }
+    public abstract ResponseEntity executeRequest(HttpRequest request);
 
-    public abstract void onFinish(ResponseEntity responseEntity);
+    public abstract void onFinish(RequestTask requestTask);
 
-    public abstract void onCancel();
+
+    @Override
+    public void run() {
+        try {
+            responseEntity = executeRequest(mRequest);
+        } finally {
+            onFinish(this);
+        }
+    }
+
 }
