@@ -37,6 +37,7 @@ public class HttpDispatcher extends Dispatcher {
     @Override
     public void performResponse(RequestTask requestTask) {
         HttpRequest request = requestTask.mRequest;
+        mRunningMap.remove(request.getCacheKey());
         if (request != null) {
             HttpListener listener = request.getListener();
             if (listener != null) {
@@ -49,6 +50,7 @@ public class HttpDispatcher extends Dispatcher {
     @Override
     public void performCancel(HttpRequest request) {
         mRunningMap.get(request.getCacheKey()).cancel(true);
+        mRunningMap.remove(request.getCacheKey());
         request.getListener().onCancel();
     }
 
