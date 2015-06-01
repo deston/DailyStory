@@ -8,8 +8,8 @@ import java.util.concurrent.*;
 
 public class HttpDispatcher extends Dispatcher {
     private int mMaxRequest = 64;
-    private BlockingQueue<HttpRequestTask> mRunningQueue = new PriorityBlockingQueue<HttpRequestTask>();
-    private BlockingQueue<HttpRequestTask> mReadyQueue = new PriorityBlockingQueue<HttpRequestTask>();
+    private BlockingQueue<HttpRequestTask> mRunningQueue = new LinkedBlockingQueue<HttpRequestTask>();
+    private BlockingQueue<HttpRequestTask> mReadyQueue = new LinkedBlockingQueue<HttpRequestTask>();
     private ExecutorService mExecutorService;
     private HttpUrlStack mHttpStack;
     private Cache mCache;
@@ -41,7 +41,7 @@ public class HttpDispatcher extends Dispatcher {
         if (request != null) {
             HttpListener listener = request.getListener();
             if (listener != null) {
-                listener.onResponse(requestTask.responseEntity);
+                listener.onResponse(requestTask.mResponseEntity);
             }
         }
     }

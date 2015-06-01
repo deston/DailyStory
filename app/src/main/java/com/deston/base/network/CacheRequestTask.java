@@ -6,27 +6,31 @@ import com.deston.base.cache.Cache;
 
 public class CacheRequestTask extends RequestTask implements Runnable {
     private Cache mCache;
-    private CacheDispatcher mDispatcher;
-    public CacheRequestTask(HttpRequest request, Cache cache, CacheDispatcher dispatcher) {
+    private CacheDispatcher mCacheDispathcer;
+    private HttpDispatcher mHttpDispatcher;
+    public CacheRequestTask(HttpRequest request, Cache cache, CacheDispatcher cacheDispatcher, HttpDispatcher httpDispatcher) {
         super(request);
         this.mCache = cache;
-        this.mDispatcher = dispatcher;
+        this.mCacheDispathcer = cacheDispatcher;
+        this.mHttpDispatcher = httpDispatcher;
     }
 
     @Override
     public ResponseEntity executeRequest(HttpRequest request) {
         NetworkResponse response = (NetworkResponse) mCache.get(request.getCacheKey());
-        responseEntity = new ResponseEntity();
-        responseEntity.response = response;
-        if (response == null) {
-            responseEntity.code = -1;
-        }
-        return responseEntity;
+        mResponseEntity = new ResponseEntity();
+        mResponseEntity.response = response;
+        return mResponseEntity;
     }
 
     @Override
-    public void onFinish(RequestTask requestTask) {
-        mDispatcher.dispatchResponse(this);
+    public void onFinish() {
+        if (mResponseEntity == null || mResponseEntity.response == null) {
+            mCacheDispathcer.removeRunnigRequest(mRequest, false);
+            mHttpDispatcher.dispatchRequest(mRequest);
+        } else {
+            mCacheDispathcer.dispatchResponse(this);
+        }
     }
 
 

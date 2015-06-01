@@ -20,9 +20,9 @@ public class HttpEngine {
     }
 
     private HttpEngine() {
-        mHttpDispatcher = new HttpDispatcher(mCache);
-        mCacheDispatcher = new CacheDispatcher(mCache);
         mCache = new LruMemoryCache();
+        mHttpDispatcher = new HttpDispatcher(mCache);
+        mCacheDispatcher = new CacheDispatcher(mCache, mHttpDispatcher);
     }
 
     public HttpDispatcher getHttpDispatcher() {

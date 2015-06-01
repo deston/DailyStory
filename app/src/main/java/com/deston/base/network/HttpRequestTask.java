@@ -23,7 +23,7 @@ public class HttpRequestTask extends RequestTask{
         ResponseEntity responseEntity = new ResponseEntity();
         NetworkResponse response = null;
         try {
-            response = mHttpStack.performRequest(mRequest);
+            response = mHttpStack.performRequest(this.mRequest);
         } catch (IOException e) {
             e.printStackTrace();
             responseEntity.code = -1;
@@ -33,8 +33,8 @@ public class HttpRequestTask extends RequestTask{
     }
 
     @Override
-    public void onFinish(RequestTask requestTask) {
-        ResponseEntity entity = requestTask.responseEntity;
+    public void onFinish() {
+        ResponseEntity entity = mResponseEntity;
         if (entity != null) {
             if (entity.code != -1) {
                 if (mRequest.isShouldCache()) {
