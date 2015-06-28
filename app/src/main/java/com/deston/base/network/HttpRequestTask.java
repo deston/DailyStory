@@ -1,6 +1,9 @@
 package com.deston.base.network;
 
 
+import android.util.Log;
+import com.deston.base.Constants;
+
 import java.io.IOException;
 
 public class HttpRequestTask extends RequestTask{
@@ -23,11 +26,14 @@ public class HttpRequestTask extends RequestTask{
         ResponseEntity responseEntity = new ResponseEntity();
         NetworkResponse response = null;
         try {
-            response = mHttpStack.performRequest(this.mRequest);
+            Log.i(Constants.TAG_COMM, "HttpRequestTask : begin executeRequest");
+            response = mHttpStack.performRequest(mRequest);
         } catch (IOException e) {
             e.printStackTrace();
             responseEntity.code = -1;
+            Log.i(Constants.TAG_COMM, "HttpRequestTask : executeRequest catch exception , e = " + e);
         }
+        Log.i(Constants.TAG_COMM, "HttpRequestTask : finish executeRequest, response = " + response);
         responseEntity.response = response;
         return responseEntity;
     }
@@ -43,7 +49,6 @@ public class HttpRequestTask extends RequestTask{
             }
             mDispatcher.dispatchResponse(this);
             mDispatcher.removeRunningTask(this);
-            mDispatcher.promoteTask();
         }
     }
 

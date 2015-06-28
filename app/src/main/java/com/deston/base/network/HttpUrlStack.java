@@ -1,5 +1,8 @@
 package com.deston.base.network;
 
+import android.util.Log;
+import com.deston.base.CommonUtil;
+import com.deston.base.Constants;
 import org.apache.http.entity.BasicHttpEntity;
 
 import java.io.ByteArrayOutputStream;
@@ -15,27 +18,17 @@ import java.util.Map;
 public class HttpUrlStack {
     public NetworkResponse performRequest(HttpRequest request) throws IOException {
         NetworkResponse networkResponse = null;
+        Log.i(Constants.TAG_COMM, "HttpUrlStack performRequest: " + "begin openConnection");
         HttpURLConnection urlConnection = openConnection(request);
         setRequestParamsForConnection(urlConnection, request);
         int responseCode = urlConnection.getResponseCode();
-        BasicHttpEntity entity = getEntityFromConnection(urlConnection);
+        Log.i(Constants.TAG_COMM, "HttpUrlStack performRequest: get responseCode : " + responseCode);
+        InputStream inputStream = urlConnection.getInputStream();
         Map<String, String> header = convertHeaders(urlConnection);
-        byte[] data = inputStreamToByteArray(entity.getContent());
-        networkResponse = new NetworkResponse(data, responseCode, header);
+        networkResponse = new NetworkResponse(inputStream, responseCode, header);
         return networkResponse;
     }
 
-    private byte[] inputStreamToByteArray(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int bufferSize = 4096;
-        byte[] data = new byte[bufferSize];
-        int count = -1;
-        while ((count = inputStream.read(data)) != -1) {
-            buffer.write(data, 0, bufferSize);
-        }
-        buffer.flush();
-        return buffer.toByteArray();
-    }
 
     private Map<String, String> convertHeaders(HttpURLConnection urlConnection) {
         Map<String, String> header = new HashMap<String, String>();
@@ -50,7 +43,9 @@ public class HttpUrlStack {
         InputStream inputStream;
         try {
             inputStream = urlConnection.getInputStream();
+            Log.i(Constants.TAG_COMM, "HttpUrlStack getEntityFromConnection: String = " + CommonUtil.inputSreamToString(inputStream));
         } catch (IOException e) {
+            Log.i(Constants.TAG_COMM, "HttpUrlStack getEntityFromConnection: catch IOException= " + e);
             inputStream = urlConnection.getErrorStream();
         }
         entity.setContent(inputStream);

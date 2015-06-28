@@ -1,5 +1,7 @@
 package com.deston.base.network;
 
+import android.util.Log;
+import com.deston.base.Constants;
 import com.deston.base.cache.Cache;
 import com.deston.base.cache.LruMemoryCache;
 
@@ -31,8 +33,10 @@ public class HttpEngine {
     public void execute(HttpRequest request, HttpListener listener, boolean getCache) {
         request.setListener(listener);
         if (getCache) {
+            Log.i(Constants.TAG_COMM, "excute getCache = true, begin CacheDispatch");
             mCacheDispatcher.dispatchRequest(request);
         } else {
+            Log.i(Constants.TAG_COMM, "excute getCache = false, begin HttpDispatch");
             mHttpDispatcher.dispatchRequest(request);
         }
     }

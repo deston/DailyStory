@@ -1,5 +1,7 @@
 package com.deston.base.network;
 
+import android.util.Log;
+import com.deston.base.Constants;
 import com.deston.base.cache.Cache;
 
 import java.util.HashMap;
@@ -7,13 +9,12 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class HttpDispatcher extends Dispatcher {
-    private int mMaxRequest = 64;
     private BlockingQueue<HttpRequestTask> mRunningQueue = new LinkedBlockingQueue<HttpRequestTask>();
-    private BlockingQueue<HttpRequestTask> mReadyQueue = new LinkedBlockingQueue<HttpRequestTask>();
     private ExecutorService mExecutorService;
     private HttpUrlStack mHttpStack;
     private Cache mCache;
     private Map<String, Future> mRunningMap = new HashMap<String, Future>();
+
     public HttpDispatcher(Cache cache) {
         this.mCache = cache;
         mHttpStack = new HttpUrlStack();
@@ -24,14 +25,11 @@ public class HttpDispatcher extends Dispatcher {
 
     @Override
     public void performRequest(HttpRequest request) {
+        Log.i(Constants.TAG_COMM, "HttpDispatcher : begin performRequest");
         HttpRequestTask task = new HttpRequestTask(request, this, mHttpStack);
-        if (mRunningQueue.size() < mMaxRequest) {
-            mRunningQueue.add(task);
-            Future future = mExecutorService.submit(task);
-            mRunningMap.put(request.getCacheKey(), future);
-        } else {
-            mReadyQueue.add(task);
-        }
+        mRunningQueue.add(task);
+        Future future = mExecutorService.submit(task);
+        mRunningMap.put(request.getCacheKey(), future);
     }
 
     @Override
@@ -64,10 +62,4 @@ public class HttpDispatcher extends Dispatcher {
         mRunningQueue.remove(task);
     }
 
-    public void promoteTask() {
-        if (mRunningQueue.size() < mMaxRequest && !mReadyQueue.isEmpty()) {
-            HttpRequestTask task = mReadyQueue.poll();
-            dispatchRequest(task.getRequest());
-        }
-    }
 }
