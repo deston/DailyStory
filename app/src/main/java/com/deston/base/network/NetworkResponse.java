@@ -1,19 +1,17 @@
 package com.deston.base.network;
 
-import android.util.Log;
 
-import java.io.InputStream;
 import java.util.Map;
 
-public class NetworkResponse {
+public class NetworkResponse<T> {
 
-    private InputStream mInputStream;
-    private int mHttpCode;
-    private Map<String, String> mHeaders;
-    public NetworkResponse(InputStream stream, int code, Map<String, String> headers) {
-        this.mInputStream = stream;
-        this.mHttpCode = code;
-        this.mHeaders = headers;
+    public T response;
+    public int httpCode;
+    public Map<String, String> headers;
+    public NetworkResponse(T response, int code, Map<String, String> headers) {
+        this.response = response;
+        this.httpCode = code;
+        this.headers = headers;
     }
 
 }

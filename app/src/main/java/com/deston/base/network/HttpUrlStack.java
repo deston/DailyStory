@@ -25,10 +25,15 @@ public class HttpUrlStack {
         Log.i(Constants.TAG_COMM, "HttpUrlStack performRequest: get responseCode : " + responseCode);
         InputStream inputStream = urlConnection.getInputStream();
         Map<String, String> header = convertHeaders(urlConnection);
-        networkResponse = new NetworkResponse(inputStream, responseCode, header);
+        networkResponse = parseResponseByType(request.getType(), inputStream, responseCode, header);
         return networkResponse;
     }
-
+    private NetworkResponse parseResponseByType(Class<?> type, InputStream inputStream, int responseCode, Map<String, String> header) {
+        if (type == String.class) {
+            return new NetworkResponse<String>(CommonUtil.inputSreamToString(inputStream), responseCode, header);
+        }
+        return null;
+    }
 
     private Map<String, String> convertHeaders(HttpURLConnection urlConnection) {
         Map<String, String> header = new HashMap<String, String>();

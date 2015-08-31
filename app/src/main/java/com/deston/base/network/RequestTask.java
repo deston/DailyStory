@@ -3,11 +3,11 @@ package com.deston.base.network;
 
 public abstract class RequestTask implements Runnable{
     protected HttpRequest mRequest;
-    protected ResponseEntity mResponseEntity;
+    protected NetworkResponse mNetworkResponse;
     public RequestTask(HttpRequest request) {
         this.mRequest = request;
     }
-    public abstract ResponseEntity executeRequest(HttpRequest request);
+    public abstract NetworkResponse executeRequest(HttpRequest request);
 
     public abstract void onFinish();
 
@@ -15,7 +15,7 @@ public abstract class RequestTask implements Runnable{
     @Override
     public void run() {
         try {
-            mResponseEntity = executeRequest(mRequest);
+            mNetworkResponse = executeRequest(mRequest);
         } finally {
             onFinish();
         }

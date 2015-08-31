@@ -16,16 +16,14 @@ public class CacheRequestTask extends RequestTask implements Runnable {
     }
 
     @Override
-    public ResponseEntity executeRequest(HttpRequest request) {
+    public NetworkResponse executeRequest(HttpRequest request) {
         NetworkResponse response = (NetworkResponse) mCache.get(request.getCacheKey());
-        mResponseEntity = new ResponseEntity();
-        mResponseEntity.response = response;
-        return mResponseEntity;
+        return response;
     }
 
     @Override
     public void onFinish() {
-        if (mResponseEntity == null || mResponseEntity.response == null) {
+        if (mNetworkResponse == null) {
             mCacheDispathcer.removeRunnigRequest(mRequest, false);
             mHttpDispatcher.dispatchRequest(mRequest);
         } else {

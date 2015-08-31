@@ -1,7 +1,6 @@
 package com.deston.ui.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,11 +10,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.deston.base.business.BusinessListener;
 import com.deston.base.business.BusinessResponse;
-import com.deston.base.business.BusinessTask;
+import com.deston.base.business.Business;
 import com.deston.base.network.HttpEngine;
 import com.deston.base.network.HttpListener;
 import com.deston.base.network.HttpRequest;
-import com.deston.base.network.ResponseEntity;
+import com.deston.base.network.NetworkResponse;
 import com.deston.dailylaugh.app.R;
 import com.deston.iview.IHomeListView;
 import com.deston.base.model.HomeItemModel;
@@ -56,10 +55,10 @@ public class HomeListFragment extends BaseFragment implements IHomeListView{
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HttpRequest request = new HttpRequest(url);
+                HttpRequest request = new HttpRequest(String.class, url);
                 HttpEngine.getInstance().execute(request, new HttpListener() {
                     @Override
-                    public void onResponse(ResponseEntity entity) {
+                    public void onResponse(NetworkResponse entity) {
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
 
@@ -75,7 +74,7 @@ public class HomeListFragment extends BaseFragment implements IHomeListView{
             @Override
             public void onRefresh() {
                 Log.i(TAG, "get daily list begin");
-                BusinessTask.getDailyStoryList(new BusinessListener() {
+                Business.getDailyStoryList(new BusinessListener() {
                     @Override
                     public void onResponse(BusinessResponse response) {
                         Log.i("TAG", "get dayly list end");

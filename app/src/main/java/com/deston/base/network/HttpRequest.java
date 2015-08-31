@@ -10,7 +10,7 @@ public  class HttpRequest implements Comparable{
     private boolean mShouldCache;
     private int mMethod = Method.GET;
     private int mTimeOuts = 3000;
-
+    private Class<?> responseType;
     @Override
     public int compareTo(Object another) {
         return 0;
@@ -36,16 +36,20 @@ public  class HttpRequest implements Comparable{
         return mUrl;
     }
 
-    public HttpRequest(String url) {
-        this(url, null);
+    public HttpRequest(Class<?> responseType, String url) {
+        this(responseType, url, null);
+    }
+    public Class<?> getType() {
+        return responseType;
     }
 
     public void setMethod(int method) {
         this.mMethod = method;
     }
-    public HttpRequest(String url, Map<String, String> additionHeaders) {
-        this.mUrl = url;
+    public HttpRequest(Class<?> responseType, String url, Map<String, String> additionHeaders) {
         this.mAdditionnalHeaders = additionHeaders;
+        this.mUrl = url;
+        this.responseType = responseType;
     }
     public void setListener(HttpListener listener) {
         this.mListener = listener;

@@ -1,5 +1,9 @@
 package com.deston.presenter;
 
+import com.deston.base.business.Business;
+import com.deston.base.business.BusinessListener;
+import com.deston.base.business.BusinessResponse;
+import com.deston.base.business.GetDailyStoryListResponse;
 import com.deston.iview.IHomeListView;
 import com.deston.base.model.HomeItemModel;
 
@@ -13,9 +17,18 @@ public class HomeListPresenterImpl implements IHomeListPresenter {
     }
     @Override
     public void loadHomeList() {
+        Business.getDailyStoryList(new BusinessListener() {
+            @Override
+            public void onResponse(BusinessResponse response) {
+                if (response instanceof GetDailyStoryListResponse) {
+
+                }
+            }
+        });
         List<HomeItemModel> models = new ArrayList<HomeItemModel>();
         initTestData(models);
         mHomeListView.initList(models);
+
     }
     private void initTestData(List<HomeItemModel> models) {
         HomeItemModel model = new HomeItemModel();

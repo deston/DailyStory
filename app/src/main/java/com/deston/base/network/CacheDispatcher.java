@@ -33,7 +33,7 @@ public class CacheDispatcher extends Dispatcher {
         if (request != null) {
             HttpListener listener = request.getListener();
             if (listener != null) {
-                listener.onResponse(requestTask.mResponseEntity);
+                listener.onResponse(requestTask.mNetworkResponse);
             }
         }
     }

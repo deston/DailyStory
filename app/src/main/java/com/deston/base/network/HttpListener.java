@@ -1,6 +1,6 @@
 package com.deston.base.network;
 
 public interface HttpListener {
-    public void onResponse(ResponseEntity entity);
+    public void onResponse(NetworkResponse response);
     public void onCancel();
 }
