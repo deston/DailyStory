@@ -1,5 +1,7 @@
 package com.deston.base.network;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import com.deston.base.CommonUtil;
 import com.deston.base.Constants;
@@ -31,6 +33,8 @@ public class HttpUrlStack {
     private NetworkResponse parseResponseByType(Class<?> type, InputStream inputStream, int responseCode, Map<String, String> header) {
         if (type == String.class) {
             return new NetworkResponse<String>(CommonUtil.inputSreamToString(inputStream), responseCode, header);
+        } else if (type == Bitmap.class) {
+            return new NetworkResponse<Bitmap>(BitmapFactory.decodeStream(inputStream), responseCode, header);
         }
         return null;
     }

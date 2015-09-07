@@ -58,7 +58,7 @@ public  class HttpRequest implements Comparable{
         return mListener;
     }
     public String getCacheKey() {
-        return "";
+        return mUrl;
     }
 
     public void setShouldCache(boolean shouldCache) {

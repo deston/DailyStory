@@ -4,18 +4,20 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
     </style>
-    <style name="text_16_ff000000">
-        <item name="android:textSize">16dp</item>
+    <style name="text_15_ff000000_bold">
+        <item name="android:textSize">15dp</item>
         <item name="android:textColor">#ff000000</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="text_14_9e000000">
         <item name="android:textSize">14dp</item>
         <item name="android:textColor">#9e000000</item>
     </style>
 
-    <style name="text_18_ff000000">
-        <item name="android:textSize">18dp</item>
+    <style name="text_17_ff000000_bold">
+        <item name="android:textSize">17dp</item>
         <item name="android:textColor">#ff000000</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="text_17_d9000000">
         <item name="android:textSize">17dp</item>

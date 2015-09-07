@@ -1,5 +1,6 @@
 package com.deston.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.deston.iview.IHomeListView;
 import com.deston.base.model.HomeItemModel;
 import com.deston.presenter.HomeListPresenterImpl;
 import com.deston.presenter.IHomeListPresenter;
+import com.deston.ui.activity.StoryDetailActivity;
 import com.deston.ui.adapter.HomeListAdapter;
 
 import java.util.List;
@@ -49,45 +51,46 @@ public class HomeListFragment extends BaseFragment implements IHomeListView{
     }
 
     private void initViews(View view) {
-        final String url = "https://api.douban.com/v2/book/1220562";
         mListView = (ListView) view.findViewById(R.id.home_list_view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.home_list_refresh_layout);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HttpRequest request = new HttpRequest(String.class, url);
-                HttpEngine.getInstance().execute(request, new HttpListener() {
-                    @Override
-                    public void onResponse(NetworkResponse entity) {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-
-                    @Override
-                    public void onCancel() {
-
-                    }
-                });
+                HomeItemModel itemModel = mAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), StoryDetailActivity.class);
+                intent.putExtra(StoryDetailActivity.KEY_STORY_ID, itemModel.id);
+                startActivity(intent);
             }
         });
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.i(TAG, "get daily list begin");
-                Business.getDailyStoryList(new BusinessListener() {
-                    @Override
-                    public void onResponse(BusinessResponse response) {
-                        Log.i("TAG", "get dayly list end");
-                    }
-                });
+                mHomeListPresenter.loadHomeList();
             }
         });
     }
 
     @Override
     public void initList(List<HomeItemModel> models) {
-        mAdapter = new HomeListAdapter(getActivity(), models);
-        mListView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new HomeListAdapter(getActivity(), models);
+            mListView.setAdapter(mAdapter);
+        } else {
+            mAdapter.setItems(models);
+            mAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    @Override
+    public void stopProgress() {
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void startProgress() {
+        mSwipeRefreshLayout.setRefreshing(true);
     }
 
 }

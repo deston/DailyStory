@@ -12,24 +12,26 @@ import java.util.List;
 
 public class HomeListPresenterImpl implements IHomeListPresenter {
     private IHomeListView mHomeListView;
+
     public HomeListPresenterImpl(IHomeListView homeListView) {
         this.mHomeListView = homeListView;
     }
+
     @Override
     public void loadHomeList() {
+        mHomeListView.startProgress();
         Business.getDailyStoryList(new BusinessListener() {
             @Override
             public void onResponse(BusinessResponse response) {
+                mHomeListView.stopProgress();
                 if (response instanceof GetDailyStoryListResponse) {
-
+                    mHomeListView.initList(((GetDailyStoryListResponse) response).homeItemModels);
                 }
             }
         });
-        List<HomeItemModel> models = new ArrayList<HomeItemModel>();
-        initTestData(models);
-        mHomeListView.initList(models);
 
     }
+
     private void initTestData(List<HomeItemModel> models) {
         HomeItemModel model = new HomeItemModel();
         model.title = "瞎扯";
